@@ -12,19 +12,19 @@ https://docs.djangoproject.com/en/dev/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+import dj_database_url
+from project_runpy import env
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ruw3#zm(x34x!443z7ompz@_f1xa#_xd=u*w3h2cds)=w8sf2_'
+SECRET_KEY = env.get('SECRET_KEY', 'Rotom')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']  # TODO
 
 
 # Application definition
@@ -62,6 +62,7 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+DATABASES = {'default': dj_database_url.config(default='sqlite:///ox_scale.db')}
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
@@ -70,9 +71,9 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
+USE_I18N = False
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
