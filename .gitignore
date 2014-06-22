@@ -1,0 +1,14 @@
+# Private User Content
+.env
+.agignore
+
+
+# Randomly generated files
+*.pyc
+.DS_Store
+
+
+# Randomly generated dirs
+.sass-cache/
+node_modules/
+static_root/
