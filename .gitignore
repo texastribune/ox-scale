@@ -1,3 +1,7 @@
+# Django support files
+*.db
+
+
 # Private User Content
 .env
 .agignore
