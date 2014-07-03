@@ -6,10 +6,13 @@ from django_extensions.db.fields import json
 class Dataset(models.Model):
     # nullable because we don't really care who owns it, but should be set
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    name = models.CharField(max_length=255)
+
+    # bookkeeping fields
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return self.owner or 'anonymous'
+        return u'{} ({})'.format(self.name, self.owner or 'anonymous')
 
 
 class Datapoint(models.Model):
