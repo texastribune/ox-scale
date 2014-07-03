@@ -4,8 +4,12 @@ from django_extensions.db.fields import json
 
 
 class Dataset(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
+    # nullable because we don't really care who owns it, but should be set
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return self.owner or 'anonymous'
 
 
 class Datapoint(models.Model):
@@ -17,7 +21,7 @@ class Datapoint(models.Model):
     # match
     match = models.ForeignKey('self', related_name='+', null=True, blank=True)
     match_confidence = models.FloatField(null=True, blank=True,
-        default='How confident are we that this match is right?')
+        help_text='How confident are we that this match is right?')
     match_won = models.PositiveIntegerField(default=0,
         help_text='How many times the match was chosen')
     match_sample = models.PositiveIntegerField(default=0,
@@ -26,6 +30,9 @@ class Datapoint(models.Model):
     # bookkeeping fields
     created_at = models.DateTimeField(auto_now_add=True)
     created_from = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Question(models.Model):
