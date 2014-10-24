@@ -1,66 +1,65 @@
-from django.conf import settings
+from __future__ import unicode_literals
+
 from django.db import models
-from django_extensions.db.fields import json
+from django_extensions.db.fields.json import JSONField
 
 
-class Dataset(models.Model):
-    # nullable because we don't really care who owns it, but should be set
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+class QuestionSet(models.Model):
     name = models.CharField(max_length=255)
-
-    # bookkeeping fields
+    # owner = # TODO
+    # Bookkeeping Fields
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return u'{} ({})'.format(self.name, self.owner or 'anonymous')
+        return '{} ({})'.format(self.name, self.questions.count())
 
 
-class Datapoint(models.Model):
-    dataset = models.ForeignKey(Dataset, related_name='datapoints')
-
-    name = models.CharField(max_length=255, unique=True)
-    meta = json.JSONField()
-
-    # match
-    match = models.ForeignKey('self', related_name='+', null=True, blank=True)
-    match_confidence = models.FloatField(null=True, blank=True,
-        help_text='How confident are we that this match is right?')
-    match_won = models.PositiveIntegerField(default=0,
-        help_text='How many times the match was chosen')
-    match_sample = models.PositiveIntegerField(default=0,
-        help_text='How many times this question was asked')
-
-    # bookkeeping fields
-    created_at = models.DateTimeField(auto_now_add=True)
-    created_from = models.CharField(max_length=100)
+class Choice(models.Model):
+    choice = models.CharField(max_length=255)
 
     def __unicode__(self):
-        return self.name
+        return self.choice
 
 
 class Question(models.Model):
     """
-    Asks a question about a datapoint in a dataset.
+    Asks a question.
     """
-    datapoint = models.OneToOneField(Datapoint, null=True, blank=True,
-        related_name='question')
-    includes = models.CommaSeparatedIntegerField(max_length=100,
-        help_text='These are PKs of the `Datapoint`s the '
-        'question should prefer to offer as choices.')
-    excludes = models.CommaSeparatedIntegerField(
-        max_length=255,
-        help_text='These `Datapoint` PKs should be excluded '
-        'as answer choices.')
+    set = models.ForeignKey(QuestionSet, related_name='questions')
+    question = models.TextField()
+    choices = models.ManyToManyField(Choice)
+    order_matters = models.BooleanField(default=False,
+        help_text='Does order matter when displaying choices?')
+
+    def __unicode__(self):
+        return '{} ({})'.format(self.question, self.choices.count())
 
 
 class Response(models.Model):
     """
     Every response to a `Question`.
     """
-    question = models.ForeignKey(Question)
-    choice = models.ForeignKey(Datapoint)
+    question = models.ForeignKey(Question,
+        help_text='What question was asked?')
+    # Don't bother with M2M and through table b/c we don't interpret responses
+    choices_picked = models.CommaSeparatedIntegerField(max_length=255)
 
     # bookkeeping
     created_at = models.DateTimeField(auto_now_add=True)
-    ip_address = models.CharField(max_length=48)
-    user_agent = models.CharField(max_length=200)
+    ip_address = models.GenericIPAddressField(max_length=48,
+        null=True, blank=True)
+    meta = JSONField(null=True, blank=True,
+        help_text='User-Agent and any other info you might want for later')
+
+    def __unicode__(self):
+        # TODO
+        return unicode(self.question)
+
+    # CUSTOM PROPERTIES #
+
+    @property
+    def choices(self):
+        """Pretend we had a .choices m2m field."""
+        # TODO perf
+        # TODO mimic queryset
+        return [Choice.objects.get(pk=pk) for pk in self.choices_picked]

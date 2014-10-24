@@ -1,4 +1,5 @@
 import os
+import unittest
 
 from django.test import TestCase, RequestFactory
 
@@ -9,6 +10,7 @@ from .. import models
 BASE_DIR = os.path.dirname(__file__)
 
 
+@unittest.skip('TODO')
 class DatasetCreateFromFileTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
