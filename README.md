@@ -10,7 +10,6 @@ For guessing the weight of oxen
 Install requirements:
 
     pip install -r requirements.txt
-    bundle install
     npm install
 
 Setup your Python path:
