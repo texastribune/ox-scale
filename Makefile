@@ -25,4 +25,5 @@ test:
 resetdb:
 	$(MANAGE) reset_db --noinput
 	$(MANAGE) migrate --noinput
+	./ox_scale/scripts/load_sample_set.py
 
