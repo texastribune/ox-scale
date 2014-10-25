@@ -1,11 +1,12 @@
 <p>
-  {{ object }}
+  {{ object.question }}
 </p>
-<form action="." method="post">
+<form action="{% url 'ox-scale:question_response' object.set.uuid %}" method="post">
   {% csrf_token %}
+  <input type="hidden" name="question" value="{{ object.pk }}">
   {% for choice in object.display_choices %}
     <label>
-      <input type="radio" name="hmm" value="{{ choice.pk }}">{{ choice }}
+      <input type="radio" name="response" value="{{ choice.pk }}">{{ choice }}
     </label>
   {% endfor %}
 </form>
