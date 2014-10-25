@@ -9,7 +9,7 @@ from .utils import import_from_csv
 class QuestionInline(admin.TabularInline):
     extra = 0
     model = models.Question
-    readonly_fields = ('question', 'choices', )
+    readonly_fields = ('question', 'choices', 'impressions', 'clicks', )
 
 
 class QuestionSetAdmin(admin.ModelAdmin):

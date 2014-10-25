@@ -38,8 +38,23 @@ class Question(models.Model):
     order_matters = models.BooleanField(default=False,
         help_text='Does order matter when displaying choices?')
 
+    # Metrics Fields
+    impressions = models.PositiveIntegerField(default=0,
+        help_text='Question was displayed')
+    clicks = models.PositiveIntegerField(default=0,
+        help_text='Question was interacted with, but not necessarily answered')
+
     def __unicode__(self):
         return self.question
+
+    # CUSTOM PROPERTIES
+
+    @property
+    def display_choices(self):
+        """The question's choices, possibly sorted randomly."""
+        if self.order_matters:
+            return self.choices.all()
+        return self.choices.all().order_by('?')
 
 
 class Response(models.Model):

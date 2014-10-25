@@ -10,4 +10,7 @@ from . import models
 class RandomQuestion(DetailView):
     def get_object(self):
         qset = models.QuestionSet.objects.get(uuid=self.kwargs['uuid'])
-        return qset.questions.all()[random.randrange(0, qset.question_count)]
+        question = qset.questions.all()[random.randrange(0, qset.question_count)]
+        question.impressions += 1
+        question.save()
+        return question

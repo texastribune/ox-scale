@@ -1,4 +1,4 @@
 {{ object }}
-{% for choice in object.choices.all %}
+{% for choice in object.display_choices %}
   {{ choice }}
 {% endfor %}
