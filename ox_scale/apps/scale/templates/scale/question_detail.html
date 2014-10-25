@@ -1,4 +1,25 @@
-{{ object }}
-{% for choice in object.display_choices %}
-  {{ choice }}
-{% endfor %}
+<p>
+  {{ object }}
+</p>
+<form action="." method="post">
+  {% csrf_token %}
+  {% for choice in object.display_choices %}
+    <label>
+      <input type="radio" name="hmm" value="{{ choice.pk }}">{{ choice }}
+    </label>
+  {% endfor %}
+</form>
+<script>
+  var submit = function (e) {
+    console.log(e);
+    console.log(this.form);
+    // TODO
+    // form.submit();
+  };
+
+  var inputs = document.getElementsByTagName('input');
+  // inputs catches csrf, but don't care
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener('click', submit);
+  }
+</script>
