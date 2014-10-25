@@ -1,18 +1,13 @@
-from django.views.generic import View
+from __future__ import unicode_literals
+
+import random
+
+from django.views.generic.detail import DetailView
 
 from . import models
-from .forms import DatasetFileImportForm
 
 
-class DatasetCreateFromFile(View):
-    def post(self, request):
-        form = DatasetFileImportForm(data=request.POST, files=request.FILES)
-        if form.is_valid():
-            models.Dataset.objects.create(
-                # TODO
-                # owner=request.user,
-                name=form.cleaned_data['name'],
-            )
-
-    def get(self, request):
-        pass
+class RandomQuestion(DetailView):
+    def get_object(self):
+        qset = models.QuestionSet.objects.get(uuid=self.kwargs['uuid'])
+        return qset.questions.all()[random.randrange(0, qset.question_count)]

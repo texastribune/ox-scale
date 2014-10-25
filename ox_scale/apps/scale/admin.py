@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.contrib import admin
 
 from . import models
@@ -12,7 +14,7 @@ class QuestionInline(admin.TabularInline):
 
 class QuestionSetAdmin(admin.ModelAdmin):
     inlines = (QuestionInline, )
-    list_display = ('__unicode__', 'created_at', )
+    list_display = ('__unicode__', 'created_at', 'uuid', )
 
     def save_model(self, request, obj, form, change):
         """Save the file while throwing away the file."""
@@ -23,4 +25,6 @@ class QuestionSetAdmin(admin.ModelAdmin):
         obj.save()
         csv_file.seek(0)  # reset file pointer, not sure why I have to do this.
         import_from_csv(obj, csv_file)
+        obj.question_count = obj.questions.count()
+        obj.save()
 admin.site.register(models.QuestionSet, QuestionSetAdmin)

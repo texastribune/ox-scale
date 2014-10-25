@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django_extensions.db.fields import ShortUUIDField
 from django_extensions.db.fields.json import JSONField
 
 
@@ -9,11 +10,14 @@ class QuestionSet(models.Model):
     # XXX shim to get a file input in the Django Admin
     input_file = models.FileField(null=True, blank=True)
     # owner = # TODO
+    active = models.BooleanField(default=True)
+    uuid = ShortUUIDField(unique=True)
     # Bookkeeping Fields
+    question_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return '{} ({})'.format(self.name, self.questions.count())
+        return '{} ({})'.format(self.name, self.question_count)
 
 
 class Choice(models.Model):
