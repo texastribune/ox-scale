@@ -12,6 +12,7 @@ class QuestionSetFactory(factory.DjangoModelFactory):
 
 class ChoiceFactory(factory.DjangoModelFactory):
     FACTORY_FOR = models.Choice
+    set = factory.SubFactory(QuestionSetFactory)
     choice = factory.Sequence(lambda i: 'Choice {}'.format(i))
 
 

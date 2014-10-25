@@ -5,7 +5,9 @@ from django_extensions.db.fields.json import JSONField
 
 
 class QuestionSet(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, blank=True)
+    # XXX shim to get a file input in the Django Admin
+    input_file = models.FileField(null=True, blank=True)
     # owner = # TODO
     # Bookkeeping Fields
     created_at = models.DateTimeField(auto_now_add=True)
@@ -15,6 +17,7 @@ class QuestionSet(models.Model):
 
 
 class Choice(models.Model):
+    set = models.ForeignKey(QuestionSet, related_name='choices')
     choice = models.CharField(max_length=255)
 
     def __unicode__(self):
@@ -32,7 +35,7 @@ class Question(models.Model):
         help_text='Does order matter when displaying choices?')
 
     def __unicode__(self):
-        return '{} ({})'.format(self.question, self.choices.count())
+        return self.question
 
 
 class Response(models.Model):
