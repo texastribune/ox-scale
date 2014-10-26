@@ -17,6 +17,12 @@ class QuestionSetAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'created_at', 'uuid', )
     readonly_fields = ('owner', 'question_count', )
 
+    def get_queryset(self, request):
+        qs = super(QuestionSetAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(owner=request.user)
+
     def save_model(self, request, obj, form, change):
         """Save the file while throwing away the file."""
         csv_file = form.files['input_file']
