@@ -9,14 +9,7 @@ from . import models
 from .utils import import_from_csv
 
 
-class QuestionInline(admin.TabularInline):
-    extra = 0
-    model = models.Question
-    readonly_fields = ('question', 'choices', 'impressions', 'clicks', )
-
-
 class QuestionSetAdmin(DjangoObjectActions, admin.ModelAdmin):
-    inlines = (QuestionInline, )
     list_display = ('__unicode__', 'created_at', 'uuid', )
     readonly_fields = ('owner', 'question_count', )
     save_on_top = True
@@ -64,6 +57,7 @@ admin.site.register(models.QuestionSet, QuestionSetAdmin)
 
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('question', 'set', 'impressions', 'clicks', )
+    list_filter = ('set', )
     readonly_fields = ('set', 'choices', 'impressions', 'clicks', )
     search_fields = ('question', )
 
