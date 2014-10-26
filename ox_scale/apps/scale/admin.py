@@ -36,3 +36,16 @@ class QuestionSetAdmin(admin.ModelAdmin):
         obj.question_count = obj.questions.count()
         obj.save()
 admin.site.register(models.QuestionSet, QuestionSetAdmin)
+
+
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('question', 'set', 'impressions', 'clicks', )
+    readonly_fields = ('set', 'choices', 'impressions', 'clicks', )
+    search_fields = ('question', )
+
+    def get_queryset(self, request):
+        qs = super(QuestionAdmin, self).get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(set__owner=request.user)
+admin.site.register(models.Question, QuestionAdmin)
