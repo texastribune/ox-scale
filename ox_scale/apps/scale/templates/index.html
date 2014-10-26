@@ -2,6 +2,6 @@
 <a href="{% url 'social:begin' 'github' %}?next=/">Login with GitHub</a>
 {% else %}
   Welcome, {{ user }}
-  <a href="{% url 'crud:index' %}">Admin</a>
+  <a href="{% url 'admin:index' %}">Admin</a>
   <a href="{% url 'auth:logout' %}?next=/">logout</a>
 {% endif %}
