@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from ..user_admin.admin import user_admin_site
 
 from . import models
 from .utils import import_from_csv
@@ -28,3 +29,4 @@ class QuestionSetAdmin(admin.ModelAdmin):
         obj.question_count = obj.questions.count()
         obj.save()
 admin.site.register(models.QuestionSet, QuestionSetAdmin)
+user_admin_site.register(models.QuestionSet, QuestionSetAdmin)

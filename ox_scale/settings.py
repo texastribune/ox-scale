@@ -39,6 +39,7 @@ INSTALLED_APPS = (
 
     # apps
     'ox_scale.apps.scale',
+    'ox_scale.apps.user_admin',
 
     # support
     'django_extensions',
