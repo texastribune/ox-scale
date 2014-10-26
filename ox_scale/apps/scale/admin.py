@@ -1,6 +1,9 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django_object_actions import DjangoObjectActions
 
 from . import models
 from .utils import import_from_csv
@@ -12,7 +15,7 @@ class QuestionInline(admin.TabularInline):
     readonly_fields = ('question', 'choices', 'impressions', 'clicks', )
 
 
-class QuestionSetAdmin(admin.ModelAdmin):
+class QuestionSetAdmin(DjangoObjectActions, admin.ModelAdmin):
     inlines = (QuestionInline, )
     list_display = ('__unicode__', 'created_at', 'uuid', )
     readonly_fields = ('owner', 'question_count', )
@@ -35,6 +38,19 @@ class QuestionSetAdmin(admin.ModelAdmin):
         import_from_csv(obj, csv_file)
         obj.question_count = obj.questions.count()
         obj.save()
+
+    # OBJECT ACTIONS #
+
+    def preview(self, request, obj):
+        url = '{}?preview'.format(
+            reverse('ox-scale:random_question', kwargs={'uuid': obj.uuid}))
+        # TODO previews shouldn't count toward impressions
+        return HttpResponseRedirect(url)
+    preview.attrs = {'target': '_blank'}
+
+    objectactions = ('preview', )
+
+
 admin.site.register(models.QuestionSet, QuestionSetAdmin)
 
 

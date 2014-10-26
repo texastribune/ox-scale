@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     # support
     'django_extensions',
     'social.apps.django_app.default',
+    'django_object_actions',
 )
 
 MIDDLEWARE_CLASSES = (
