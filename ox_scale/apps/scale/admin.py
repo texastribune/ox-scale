@@ -19,6 +19,7 @@ class QuestionSetAdmin(DjangoObjectActions, admin.ModelAdmin):
     inlines = (QuestionInline, )
     list_display = ('__unicode__', 'created_at', 'uuid', )
     readonly_fields = ('owner', 'question_count', )
+    save_on_top = True
 
     def get_queryset(self, request):
         qs = super(QuestionSetAdmin, self).get_queryset(request)
@@ -28,16 +29,24 @@ class QuestionSetAdmin(DjangoObjectActions, admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         """Save the file while throwing away the file."""
-        csv_file = form.files['input_file']
-        if not obj.name:
+        try:
+            csv_file = form.files['input_file']
+        except KeyError:
+            csv_file = None
+        if csv_file and not obj.name:
             obj.name = unicode(csv_file)
         obj.input_file = None  # we don't actually want the input file
         obj.owner = request.user
         obj.save()
-        csv_file.seek(0)  # reset file pointer, not sure why I have to do this.
-        import_from_csv(obj, csv_file)
+        if csv_file:
+            csv_file.seek(0)  # reset file pointer, not sure why I have to do this.
+            import_from_csv(obj, csv_file)
         obj.question_count = obj.questions.count()
         obj.save()
+
+    # TODO, sanitize css so users can't inject arbitrary html
+    # def clean_css(self):
+    #     pass
 
     # OBJECT ACTIONS #
 

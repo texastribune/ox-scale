@@ -1,26 +1,38 @@
-<p>
-  {{ object.question }}
-</p>
-<form action="{% url 'ox-scale:question_response' object.set.uuid %}" method="post">
-  {% csrf_token %}
-  <input type="hidden" name="question" value="{{ object.pk }}">
-  {% for choice in object.display_choices %}
-    <label>
-      <input type="radio" name="response" value="{{ choice.pk }}">{{ choice }}
-    </label>
-  {% endfor %}
-</form>
-<script>
-  var submit = function (e) {
-    console.log(e);
-    console.log(this.form);
-    // TODO
-    // form.submit();
-  };
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <style>
+    {{ object.set.css }}
+  </style>
+</head>
+<body>
+  <p>
+    {{ object.question }}
+  </p>
+  <form action="{% url 'ox-scale:question_response' object.set.uuid %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="question" value="{{ object.pk }}">
+    {% for choice in object.display_choices %}
+      <label>
+        <input type="radio" name="response" value="{{ choice.pk }}">{{ choice }}
+      </label>
+    {% endfor %}
+  </form>
+  <script>
+    var submit = function (e) {
+      console.log(e);
+      console.log(this.form);
+      // TODO
+      // form.submit();
+    };
 
-  var inputs = document.getElementsByTagName('input');
-  // inputs catches csrf, but don't care
-  for (var i = 0; i < inputs.length; i++) {
-    inputs[i].addEventListener('click', submit);
-  }
-</script>
+    var inputs = document.getElementsByTagName('input');
+    // inputs catches csrf, but don't care
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].addEventListener('click', submit);
+    }
+  </script>
+</body>
+</html>

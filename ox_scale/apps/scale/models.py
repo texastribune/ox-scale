@@ -12,7 +12,9 @@ class QuestionSet(models.Model):
     input_file = models.FileField(null=True, blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     active = models.BooleanField(default=True)
-    uuid = ShortUUIDField(unique=True)
+    uuid = ShortUUIDField('UUID', unique=True)
+    css = models.TextField('CSS', null=True, blank=True,
+        help_text='CSS to include')
     # Bookkeeping Fields
     question_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
