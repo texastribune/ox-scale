@@ -27,5 +27,11 @@ resetdb:
 	# social auth
 	$(MANAGE) makemigrations default --noinput
 	$(MANAGE) migrate --noinput
+	$(MANAGE) loaddata auth.json
 	./ox_scale/scripts/load_sample_set.py
 
+
+# Generate the auth fixture that contains our main group and its permissions
+.PHONY: ox_scale/apps/scale/fixtures/auth.json
+ox_scale/apps/scale/fixtures/auth.json:
+	$(MANAGE) dumpdata auth.group --natural > $@
