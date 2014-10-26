@@ -11,6 +11,7 @@ from ..views import RandomQuestion, question_response
 
 class RandomQuestionTest(TestCase):
     def setUp(self):
+        self.factory = RequestFactory()
         self.view = RandomQuestion()
 
     def test_get_object_works(self):
@@ -21,6 +22,7 @@ class RandomQuestionTest(TestCase):
         qset.question_count = qset.questions.count()
         qset.save()
         self.view.kwargs = {'uuid': qset.uuid}
+        self.view.request = self.factory.get('/foo/')
 
         with self.assertNumQueries(3):
             obj = self.view.get_object()
@@ -30,6 +32,25 @@ class RandomQuestionTest(TestCase):
         question = Question.objects.get(pk=question.pk)
         # assert impression was incremented
         self.assertEqual(question.impressions, 1)
+
+    def test_get_object_previews_do_not_count_toward_impressions(self):
+        # setup
+        question = QuestionFactory(impressions=0)
+        qset = question.set
+        # `question_count` normally set when set is created
+        qset.question_count = qset.questions.count()
+        qset.save()
+        self.view.kwargs = {'uuid': qset.uuid}
+        self.view.request = self.factory.get('/foo/?preview')
+
+        with self.assertNumQueries(2):
+            obj = self.view.get_object()
+        # assert question is returned since there's only one question
+        self.assertEqual(obj, question)
+        # clear model cache
+        question = Question.objects.get(pk=question.pk)
+        # assert impression was incremented
+        self.assertEqual(question.impressions, 0)
 
 
 class question_responseTest(TestCase):

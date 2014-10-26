@@ -44,7 +44,6 @@ class QuestionSetAdmin(DjangoObjectActions, admin.ModelAdmin):
     def preview(self, request, obj):
         url = '{}?preview'.format(
             reverse('ox-scale:random_question', kwargs={'uuid': obj.uuid}))
-        # TODO previews shouldn't count toward impressions
         return HttpResponseRedirect(url)
     preview.attrs = {'target': '_blank'}
 
