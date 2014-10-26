@@ -92,6 +92,45 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'root': {
+        'level': os.environ.get('LOGGING_LEVEL', 'WARNING'),
+        'handlers': ['console'],
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'readable_sql': {
+            '()': 'project_runpy.ReadableSqlFilter',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'project_runpy.ColorizingStreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG' if env.get('SQL', False) else 'INFO',
+            'handlers': ['console'],
+            'filters': ['require_debug_true', 'readable_sql'],
+            'propagate': False,
+        },
+        'factory': {
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    }
+}
+
+
 # Python Social Auth
 AUTHENTICATION_BACKENDS = (
     'social.backends.github.GithubOAuth2',
